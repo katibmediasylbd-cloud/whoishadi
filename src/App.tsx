@@ -14,30 +14,15 @@ import { JusticeVoiceButton } from './components/JusticeVoiceButton.tsx';
 import { HadiPosterModal } from './components/HadiPosterModal.tsx';
 import { HadisVoiceModal } from './components/HadisVoiceModal.tsx';
 import { PassTheVoiceModal } from './components/PassTheVoiceModal.tsx';
-import { AdminLogin } from './components/AdminLogin.tsx';
-import { AdminDashboard } from './components/AdminDashboard.tsx';
 import { useMemorialAudio } from './hooks/useMemorialAudio.ts';
 import { useThemeSong } from './hooks/useThemeSong.ts';
 import { AudioQuote, SiteConfig } from './types.ts';
+import { INITIAL_SITE_CONFIG, INITIAL_CLIPS } from './data/memorialData.ts';
 
 export default function App() {
-  const [isAdminRoute, setIsAdminRoute] = useState(
-    typeof window !== 'undefined' && window.location.pathname === '/admin'
-  );
-  const [adminToken, setAdminToken] = useState<string | null>(() => {
-    return typeof window !== 'undefined' ? localStorage.getItem('hadi_admin_token') : null;
-  });
-
-  const [siteConfig, setSiteConfig] = useState<SiteConfig>({
-    portraitUrl: 'https://res.cloudinary.com/ghxx4dt3/image/upload/v1791639922/Hadi_35.jpg',
-    placeholderUsed: false,
-    themeSongUrl: 'https://res.cloudinary.com/ghxx4dt3/video/upload/v1791638857/who_is_hadi.mp3',
-    title: 'WHO IS HADI?',
-    subtitle: "HADI'S VOICE. HADI'S WORDS. HADI'S LEGACY.",
-  });
-
-  const [clips, setClips] = useState<AudioQuote[]>([]);
-  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [siteConfig] = useState<SiteConfig>(INITIAL_SITE_CONFIG);
+  const [clips] = useState<AudioQuote[]>(INITIAL_CLIPS);
+  const [loadingInitial, setLoadingInitial] = useState(false);
 
   // Modal view state for 3 interactive features
   const [activeModal, setActiveModal] = useState<'poster' | 'voice' | 'pass' | null>(null);
@@ -62,92 +47,22 @@ export default function App() {
     togglePlay: toggleThemePlay,
   } = useThemeSong(siteConfig.themeSongUrl, isPlaying || isJusticeAudioPlaying);
 
-  // Fetch public configuration and active clips
-  const fetchPublicData = async () => {
-    try {
-      const [configRes, clipsRes] = await Promise.all([
-        fetch('/api/site-config'),
-        fetch('/api/clips'),
-      ]);
-
-      if (configRes.ok) {
-        const configData = await configRes.json();
-        setSiteConfig(configData);
-      }
-
-      if (clipsRes.ok) {
-        const clipsData: AudioQuote[] = await clipsRes.json();
-        setClips(clipsData);
-
-        // Check for deep link query parameter (e.g. ?v=5 or ?quote=5 or ?voice=5)
-        if (typeof window !== 'undefined') {
-          const params = new URLSearchParams(window.location.search);
-          const sharedId = params.get('v') || params.get('voice') || params.get('quote');
-          if (sharedId) {
-            const targetId = parseInt(sharedId, 10);
-            const foundClip = clipsData.find((c) => c.id === targetId);
-            if (foundClip) {
-              // Set the selected quote on screen, but strictly DO NOT autoplay before user interaction
-              setInitialClipWithoutAutoplay(foundClip);
-              setSharedNotice(`Shared Voice Recording #${foundClip.id}`);
-            }
-          }
+  // Check for deep link query parameter (e.g. ?v=5 or ?quote=5 or ?voice=5) on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const sharedId = params.get('v') || params.get('voice') || params.get('quote');
+      if (sharedId) {
+        const targetId = parseInt(sharedId, 10);
+        const foundClip = clips.find((c) => c.id === targetId);
+        if (foundClip) {
+          // Set the selected quote on screen, but strictly DO NOT autoplay before user interaction
+          setInitialClipWithoutAutoplay(foundClip);
+          setSharedNotice(`Shared Voice Recording #${foundClip.id}`);
         }
       }
-    } catch (err) {
-      console.error('Error fetching memorial data:', err);
-    } finally {
-      setLoadingInitial(false);
     }
-  };
-
-  useEffect(() => {
-    fetchPublicData();
-
-    // Listen to browser popstate for /admin routing
-    const handlePopState = () => {
-      setIsAdminRoute(window.location.pathname === '/admin');
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
-  const navigateToHome = () => {
-    window.history.pushState({}, '', '/');
-    setIsAdminRoute(false);
-    fetchPublicData();
-  };
-
-  const handleAdminLogout = () => {
-    if (adminToken) {
-      fetch('/api/admin/logout', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${adminToken}` },
-      }).catch(() => {});
-    }
-    localStorage.removeItem('hadi_admin_token');
-    setAdminToken(null);
-  };
-
-  // If on the /admin route
-  if (isAdminRoute) {
-    if (!adminToken) {
-      return (
-        <AdminLogin
-          onSuccess={(token) => setAdminToken(token)}
-          onCancel={navigateToHome}
-        />
-      );
-    }
-    return (
-      <AdminDashboard
-        token={adminToken}
-        onLogout={handleAdminLogout}
-        onViewPublic={navigateToHome}
-      />
-    );
-  }
+  }, [clips, setInitialClipWithoutAutoplay]);
 
   return (
     <div className="min-h-screen bg-[#080808] text-white flex flex-col justify-between selection:bg-[#D71920] selection:text-white relative overflow-hidden cinematic-glow">
