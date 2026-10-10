@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-dark: #080808;
+    --accent-red: #D71920;
+    --accent-red-hover: #b8141a;
+  }
+
+  body {
+    background-color: #080808;
+    color: #ffffff;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-bangla {
+  font-family: 'Hind Siliguri', 'Noto Serif Bengali', serif;
+}
+
+.font-sans-editorial {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* Subtle cinematic lighting effects */
+.cinematic-glow {
+  background: radial-gradient(circle at 50% 40%, rgba(215, 25, 32, 0.08) 0%, rgba(8, 8, 8, 0) 70%);
+}
+
+.portrait-vignette {
+  mask-image: radial-gradient(circle at 50% 45%, black 65%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, black 65%, transparent 100%);
+}
+
+/* Red button pulse and hover styling */
+.red-memorial-button {
+  background-color: #D71920;
+  box-shadow: 0 0 25px rgba(215, 25, 32, 0.35), 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.red-memorial-button:hover {
+  background-color: #e51d25;
+  box-shadow: 0 0 35px rgba(215, 25, 32, 0.55), 0 6px 18px rgba(0, 0, 0, 0.7);
+  transform: translateY(-1px);
+}
+
+.red-memorial-button:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: 0 0 15px rgba(215, 25, 32, 0.25);
+}
+
+/* Subtle audio waveform animation */
+@keyframes soundwave {
+  0%, 100% {
+    height: 6px;
+    opacity: 0.4;
+  }
+  50% {
+    height: 28px;
+    opacity: 1;
+  }
+}
+
+.animate-wave-bar {
+  animation: soundwave 1.2s ease-in-out infinite;
+}
+
+/* Cinematic fade-in for Bangla quotes */
+@keyframes cinematicFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: cinematicFadeIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Cinematic Breathing & Aura Animation for Osman Hadi Portrait */
+@keyframes portraitBreathe {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.028) translateY(-3px);
+  }
+}
+
+@keyframes ambientGlowPulse {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes voiceHaloPulse {
+  0%, 100% {
+    opacity: 0.3;
+    filter: drop-shadow(0 0 15px rgba(215, 25, 32, 0.2));
+  }
+  50% {
+    opacity: 0.65;
+    filter: drop-shadow(0 0 35px rgba(215, 25, 32, 0.45));
+  }
+}
+
+.animate-portrait-breathe {
+  animation: portraitBreathe 8s ease-in-out infinite;
+}
+
+.animate-ambient-glow {
+  animation: ambientGlowPulse 6s ease-in-out infinite;
+}
+
+.animate-voice-halo {
+  animation: voiceHaloPulse 2.4s ease-in-out infinite;
+}
+
+/* Circular Text Spin & Ripple Animations for Justice Button */
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ripplePulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.38);
+    opacity: 0;
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 20s linear infinite;
+}
+
+.animate-ripple {
+  animation: ripplePulse 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}

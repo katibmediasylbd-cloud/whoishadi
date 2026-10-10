@@ -1,0 +1,6 @@
+{
+  "name": "WHO IS HADI?",
+  "description": "An interactive digital voice memorial dedicated to Shaheed Osman Hadi. HADI'S VOICE. HADI'S WORDS. HADI'S LEGACY.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
