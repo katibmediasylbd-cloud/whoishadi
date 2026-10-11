@@ -23,7 +23,10 @@ export interface SupportSubmissionResponse {
  */
 export async function getSupporterCount(): Promise<number> {
   try {
-    const res = await fetch('/api/justice/count');
+    const res = await fetch('/api/justice/count', {
+      credentials: 'include',
+      cache: 'no-store',
+    });
     if (!res.ok) {
       const stored = typeof window !== 'undefined' ? localStorage.getItem('justice_local_count') : null;
       return stored ? Number(stored) || 0 : 0;
@@ -48,7 +51,10 @@ export async function checkSupporterStatus(fingerprint: string): Promise<boolean
     return true;
   }
   try {
-    const res = await fetch(`/api/justice/status?fingerprint=${encodeURIComponent(fingerprint)}`);
+    const res = await fetch(`/api/justice/status?fingerprint=${encodeURIComponent(fingerprint)}`, {
+      credentials: 'include',
+      cache: 'no-store',
+    });
     if (!res.ok) return false;
     const data: SupportStatusResponse = await res.json();
     if (data.hasSupported) {
@@ -72,9 +78,11 @@ export async function submitSupport(params: {
 }): Promise<SupportSubmissionResponse> {
   // 1. Check local storage first
   if (typeof window !== 'undefined' && localStorage.getItem('justice_hadi_supported') === 'true') {
+    const count = await getSupporterCount();
     return {
       success: false,
       alreadySubmitted: true,
+      count,
       message: 'ধন্যবাদ! আপনি ইতিমধ্যে সমর্থন জানিয়েছেন।',
     };
   }
@@ -86,6 +94,7 @@ export async function submitSupport(params: {
 
   let backendCount: number | undefined;
   let backendAlreadySubmitted = false;
+  let backendSuccess = false;
 
   // 3. Try sending to the backend API
   try {
@@ -97,6 +106,7 @@ export async function submitSupport(params: {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({
         fingerprint: fp,
         dwellTimeMs: params.dwellTimeMs || 1500,
@@ -117,6 +127,7 @@ export async function submitSupport(params: {
         backendCount = data.count;
       }
       if (data.success) {
+        backendSuccess = true;
         if (typeof window !== 'undefined') {
           localStorage.setItem('justice_hadi_supported', 'true');
           if (typeof data.count === 'number') {
@@ -170,7 +181,7 @@ export function subscribeToRealtimeCount(onCountUpdate: (count: number) => void)
 
   try {
     if (typeof EventSource !== 'undefined') {
-      eventSource = new EventSource('/api/justice/events');
+      eventSource = new EventSource('/api/justice/events', { withCredentials: true });
 
       eventSource.onmessage = (event) => {
         try {
@@ -195,7 +206,7 @@ export function subscribeToRealtimeCount(onCountUpdate: (count: number) => void)
     console.warn('SSE initialization failed, using poll fallback:', err);
   }
 
-  // Polling fallback every 15 seconds to sync count
+  // Fast polling fallback (every 2.5 seconds) to sync count live across all tabs/browsers
   pollInterval = setInterval(async () => {
     try {
       const count = await getSupporterCount();
@@ -205,7 +216,7 @@ export function subscribeToRealtimeCount(onCountUpdate: (count: number) => void)
     } catch {
       // ignore
     }
-  }, 15000);
+  }, 2500);
 
   return () => {
     if (eventSource) {

@@ -107,7 +107,13 @@ async function startServer() {
 
   // CORS middleware to support preview environments, iframes and cross-origin requests
   app.use((req: Request, res: Response, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin;
+    if (origin) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+    } else {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
     if (req.method === 'OPTIONS') {
@@ -121,11 +127,14 @@ async function startServer() {
 
   // API 1: Fetch current count
   app.get('/api/justice/count', (_req: Request, res: Response) => {
+    state = loadSupportersData();
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     res.json({ count: state.count });
   });
 
   // API 2: Server-Sent Events (SSE) for Realtime Synchronized Supporter Count
   app.get('/api/justice/events', (req: Request, res: Response) => {
+    state = loadSupportersData();
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
     res.setHeader('Connection', 'keep-alive');
@@ -155,6 +164,7 @@ async function startServer() {
 
   // API 3: Check if visitor already submitted support
   app.get('/api/justice/status', (req: Request, res: Response) => {
+    state = loadSupportersData();
     const fingerprint = typeof req.query.fingerprint === 'string' ? req.query.fingerprint.trim() : '';
 
     const alreadyDone = Boolean(
@@ -162,6 +172,7 @@ async function startServer() {
       state.supporters.some((s) => s.fingerprint === fingerprint)
     );
 
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     res.json({
       hasSupported: alreadyDone,
       count: state.count,
@@ -171,6 +182,7 @@ async function startServer() {
   // API 4: Submit support entry with duplicate prevention, rate limiting & bot protection
   app.post('/api/justice/support', (req: Request, res: Response) => {
     try {
+      state = loadSupportersData();
       const { fingerprint, honeypot } = req.body || {};
       const clientIp = getClientIp(req);
 
@@ -178,30 +190,21 @@ async function startServer() {
       if (honeypot && String(honeypot).trim().length > 0) {
         return res.json({
           success: false,
+          alreadySubmitted: false,
+          count: state.count,
           message: 'Invalid request',
         });
       }
 
-      // 2. Rate limiting check (relaxed to prevent false positives)
-      if (!checkRateLimit(clientIp)) {
-        return res.json({
-          success: false,
-          message: 'অতিরিক্ত অনুরোধ করা হয়েছে। অনুগ্রহ করে কিছুক্ষণ পর চেষ্টা করুন।',
-        });
-      }
-
-      // 3. Fallback for fingerprint if empty or too short
+      // 2. Validate / fallback for fingerprint
       const validFp =
-        typeof fingerprint === 'string' && fingerprint.trim().length >= 8
+        typeof fingerprint === 'string' && fingerprint.trim().length >= 5
           ? fingerprint.trim()
-          : crypto
-              .createHash('sha256')
-              .update(`${clientIp}-${req.headers['user-agent'] || 'ua'}`)
-              .digest('hex');
+          : `v_${crypto.randomUUID()}`;
 
       const ipSubnet = hashIpSubnet(clientIp);
 
-      // 4. Server-side Duplicate Prevention (checked against device fingerprint)
+      // 3. Server-side Duplicate Prevention (checked against device visitor fingerprint)
       const alreadySubmitted = state.supporters.some(
         (s) => s.fingerprint === validFp
       );
@@ -215,7 +218,7 @@ async function startServer() {
         });
       }
 
-      // 5. Record genuine support entry
+      // 4. Record genuine support entry
       const newRecord: SupporterRecord = {
         id: crypto.randomUUID(),
         fingerprint: validFp,
@@ -228,9 +231,10 @@ async function startServer() {
 
       saveSupportersData(state);
 
-      // 6. Broadcast updated count in real-time to all connected visitors
+      // 5. Broadcast updated count in real-time to all connected visitors
       broadcastCount(state.count);
 
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
       return res.json({
         success: true,
         count: state.count,
