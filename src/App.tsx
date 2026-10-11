@@ -11,6 +11,7 @@ import { QuoteDisplay } from './components/QuoteDisplay.tsx';
 import { EmbedAudioAdapter } from './components/EmbedAudioAdapter.tsx';
 import { ThemeSongControl } from './components/ThemeSongControl.tsx';
 import { JusticeVoiceButton } from './components/JusticeVoiceButton.tsx';
+import { JusticeSection } from './components/JusticeSection.tsx';
 import { HadiPosterModal } from './components/HadiPosterModal.tsx';
 import { HadisVoiceModal } from './components/HadisVoiceModal.tsx';
 import { PassTheVoiceModal } from './components/PassTheVoiceModal.tsx';
@@ -206,13 +207,16 @@ export default function App() {
         </nav>
 
         {/* CIRCULAR ANIMATED BUTTON: হাদী হত্যার বিচার চাই */}
-        <section aria-label="Justice for Osman Hadi Voice Demand" className="w-full flex justify-center mt-2">
+        <section aria-label="Justice for Osman Hadi Voice Demand" className="w-full flex justify-center mt-2 mb-2">
           <JusticeVoiceButton
             onPlayStateChange={(playing) => setIsJusticeAudioPlaying(playing)}
             isMainAudioPlaying={isPlaying}
             onStopMainAudio={() => stopCurrentAudio()}
           />
         </section>
+
+        {/* NEW SECTION: JUSTICE FOR HADI - Realtime Supporter Counter & Action */}
+        <JusticeSection />
       </main>
 
       {/* Pure, Dignified Footer without any Admin links */}
