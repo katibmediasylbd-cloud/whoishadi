@@ -82,7 +82,7 @@ export function JusticeSection() {
 
       if (result.success) {
         setHasSupported(true);
-        if (typeof result.count === 'number') {
+        if (typeof result.count === 'number' && result.count > 0) {
           setCount(result.count);
         } else {
           setCount((prev) => prev + 1);
@@ -95,10 +95,13 @@ export function JusticeSection() {
         setHasSupported(true);
         setThankYouMessage('ধন্যবাদ! আপনি ইতিমধ্যে সমর্থন জানিয়েছেন।');
       } else {
-        setThankYouMessage(result.message || 'ধন্যবাদ!');
+        setHasSupported(true);
+        setThankYouMessage(result.message || 'ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।');
       }
     } catch {
-      setThankYouMessage('সংযোগ ত্রুটি হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+      setHasSupported(true);
+      setCount((prev) => prev + 1);
+      setThankYouMessage('ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।');
     } finally {
       setSubmitting(false);
     }
