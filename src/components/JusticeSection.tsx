@@ -24,6 +24,7 @@ export function JusticeSection() {
   const SHARE_URL = 'https://whoishadi.site';
   const SHARE_MESSAGE = 'হাদি হত্যার বিচার বিষয়ে আপনার মতামত জানান: https://whoishadi.site';
   const WHATSAPP_SHARE_URL = `https://api.whatsapp.com/send?text=${encodeURIComponent(SHARE_MESSAGE)}`;
+  const FACEBOOK_SHARE_URL = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SHARE_URL)}`;
 
   useEffect(() => {
     let isMounted = true;
@@ -268,7 +269,7 @@ export function JusticeSection() {
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </span>
-              <span>আপনার দাবি গণনায় যুক্ত হয়েছে</span>
+              <span>ধন্যবাদ! আপনার দাবী গণনায় যুক্ত হয়েছে</span>
             </div>
 
             {/* Sub-text prompt for spreading the voice */}
@@ -304,14 +305,33 @@ export function JusticeSection() {
                 <span>শেয়ার করুন</span>
               </button>
 
-              {/* Secondary Sharing Options: WhatsApp and Copy Website URL */}
-              <div className="grid grid-cols-2 gap-2 w-full pt-1">
+              {/* Secondary Sharing Options: Facebook, WhatsApp, and Copy Website URL */}
+              <div className="grid grid-cols-3 gap-2 w-full pt-1">
+                {/* Facebook Share Option */}
+                <a
+                  href={FACEBOOK_SHARE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2.5 px-2 rounded-xl bg-neutral-900/90 hover:bg-[#1877F2]/15 border border-neutral-800 hover:border-[#1877F2]/60 text-neutral-200 hover:text-[#1877F2] transition-all duration-200 font-bangla text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98] select-none"
+                  aria-label="ফেসবুকে শেয়ার করুন"
+                >
+                  <svg
+                    className="w-4 h-4 text-[#1877F2] shrink-0"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                  </svg>
+                  <span>ফেসবুক</span>
+                </a>
+
                 {/* WhatsApp Share Option */}
                 <a
                   href={WHATSAPP_SHARE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-2.5 px-3 rounded-xl bg-neutral-900/90 hover:bg-[#25D366]/15 border border-neutral-800 hover:border-[#25D366]/60 text-neutral-200 hover:text-[#25D366] transition-all duration-200 font-bangla text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98] select-none"
+                  className="py-2.5 px-2 rounded-xl bg-neutral-900/90 hover:bg-[#25D366]/15 border border-neutral-800 hover:border-[#25D366]/60 text-neutral-200 hover:text-[#25D366] transition-all duration-200 font-bangla text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98] select-none"
                   aria-label="হোয়াটসঅ্যাপে শেয়ার করুন"
                 >
                   <svg
@@ -329,7 +349,7 @@ export function JusticeSection() {
                 <button
                   type="button"
                   onClick={handleCopyUrl}
-                  className={`py-2.5 px-3 rounded-xl border transition-all duration-200 font-bangla text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98] select-none cursor-pointer ${
+                  className={`py-2.5 px-2 rounded-xl border transition-all duration-200 font-bangla text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98] select-none cursor-pointer ${
                     copied
                       ? 'bg-emerald-950/60 border-emerald-600/80 text-emerald-300'
                       : 'bg-neutral-900/90 hover:bg-neutral-800 border-neutral-800 hover:border-neutral-700 text-neutral-200 hover:text-white'
