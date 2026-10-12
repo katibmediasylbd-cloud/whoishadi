@@ -44,14 +44,32 @@ export const PassTheVoiceModal: React.FC<PassTheVoiceModalProps> = ({
     }
   };
 
+  const safeOpenLink = (url: string) => {
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {
+      try {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch {
+        // Fallback
+      }
+    }
+  };
+
   const handleWhatsApp = () => {
     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
-    window.open(waUrl, '_blank', 'noopener,noreferrer');
+    safeOpenLink(waUrl);
   };
 
   const handleFacebook = () => {
     const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-    window.open(fbUrl, '_blank', 'noopener,noreferrer');
+    safeOpenLink(fbUrl);
   };
 
   const handleNativeShare = async () => {

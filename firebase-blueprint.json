@@ -1,0 +1,50 @@
+{
+  "entities": {
+    "JusticeStats": {
+      "title": "JusticeStats",
+      "description": "Global aggregate supporter statistics for the Justice for Hadi campaign.",
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Total verified supporter count."
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "ISO timestamp of the most recent supporter registration."
+        }
+      },
+      "required": ["count"]
+    },
+    "Supporter": {
+      "title": "Supporter",
+      "description": "Individual supporter signature entry used for server-side verification and duplicate prevention.",
+      "type": "object",
+      "properties": {
+        "fingerprint": {
+          "type": "string",
+          "description": "Unique client visitor fingerprint."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when support was submitted."
+        }
+      },
+      "required": ["fingerprint", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/justice_stats/{statId}": {
+      "schema": {
+        "$ref": "#/entities/JusticeStats"
+      },
+      "description": "Global aggregated count document (statId = summary)."
+    },
+    "/supporters/{supporterId}": {
+      "schema": {
+        "$ref": "#/entities/Supporter"
+      },
+      "description": "Collection of unique supporter entries keyed by visitor fingerprint or uuid."
+    }
+  }
+}

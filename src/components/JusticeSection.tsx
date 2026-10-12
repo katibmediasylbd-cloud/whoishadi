@@ -17,6 +17,7 @@ export function JusticeSection() {
 
   const mountTimestampRef = useRef<number>(Date.now());
   const fingerprintRef = useRef<string>('');
+  const pulseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -64,7 +65,10 @@ export function JusticeSection() {
         setCount((prev) => {
           if (updatedCount !== prev) {
             setIsCounterPulsing(true);
-            setTimeout(() => setIsCounterPulsing(false), 1200);
+            if (pulseTimerRef.current) clearTimeout(pulseTimerRef.current);
+            pulseTimerRef.current = setTimeout(() => {
+              if (isMounted) setIsCounterPulsing(false);
+            }, 1200);
             return updatedCount;
           }
           return prev;
@@ -74,6 +78,9 @@ export function JusticeSection() {
 
     return () => {
       isMounted = false;
+      if (pulseTimerRef.current) {
+        clearTimeout(pulseTimerRef.current);
+      }
       unsubscribe();
     };
   }, []);

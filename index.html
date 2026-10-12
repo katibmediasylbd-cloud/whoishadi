@@ -4,83 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WHO IS HADI? — Shaheed Osman Hadi Voice Memorial</title>
-    <!-- Polyfill/Shim to allow extensions and interceptors to set window.fetch without "has only a getter" error -->
-    <script>
-      (function() {
-        // 1. Suppress any unhandled error from browser extension injection
-        var isExtensionError = function(msg, filename) {
-          msg = String(msg || '');
-          filename = String(filename || '');
-          return (
-            msg.indexOf('Cannot set property fetch') !== -1 ||
-            msg.indexOf('which has only a getter') !== -1 ||
-            filename.indexOf('chrome-extension://') !== -1 ||
-            filename.indexOf('eppiocemhmnlbhjplcgkofciiegomcon') !== -1
-          );
-        };
-
-        window.addEventListener('error', function(e) {
-          if (isExtensionError(e.message, e.filename)) {
-            e.preventDefault && e.preventDefault();
-            e.stopImmediatePropagation && e.stopImmediatePropagation();
-            return true;
-          }
-        }, true);
-
-        window.addEventListener('unhandledrejection', function(e) {
-          var reason = e && e.reason;
-          var msg = (reason && reason.message) || String(reason || '');
-          var stack = (reason && reason.stack) || '';
-          if (isExtensionError(msg, stack)) {
-            e.preventDefault && e.preventDefault();
-            e.stopImmediatePropagation && e.stopImmediatePropagation();
-          }
-        }, true);
-
-        var prevOnError = window.onerror;
-        window.onerror = function(msg, url, line, col, error) {
-          if (isExtensionError(msg, url) || (error && isExtensionError(error.message, error.stack))) {
-            return true;
-          }
-          if (typeof prevOnError === 'function') {
-            return prevOnError.apply(this, arguments);
-          }
-        };
-
-        // 2. Make fetch writable on Window.prototype, window, and globalThis
-        try {
-          var nativeFetch = window.fetch;
-          var currentFetch = typeof nativeFetch === 'function' ? nativeFetch.bind(window) : nativeFetch;
-
-          var fetchDescriptor = {
-            get: function() {
-              return currentFetch;
-            },
-            set: function(val) {
-              currentFetch = val;
-            },
-            configurable: true,
-            enumerable: true
-          };
-
-          if (typeof Window !== 'undefined' && Window.prototype) {
-            try {
-              Object.defineProperty(Window.prototype, 'fetch', fetchDescriptor);
-            } catch (err) {}
-          }
-
-          try {
-            Object.defineProperty(window, 'fetch', fetchDescriptor);
-          } catch (err) {}
-
-          try {
-            if (typeof globalThis !== 'undefined') {
-              Object.defineProperty(globalThis, 'fetch', fetchDescriptor);
-            }
-          } catch (err) {}
-        } catch (e) {}
-      })();
-    </script>
     <meta name="description" content="An interactive digital voice memorial dedicated to Shaheed Osman Hadi. HADI'S VOICE. HADI'S WORDS. HADI'S LEGACY." />
     <meta property="og:title" content="WHO IS HADI?" />
     <meta property="og:description" content="An interactive digital voice memorial dedicated to Shaheed Osman Hadi. HADI'S VOICE. HADI'S WORDS. HADI'S LEGACY." />
@@ -96,4 +19,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
