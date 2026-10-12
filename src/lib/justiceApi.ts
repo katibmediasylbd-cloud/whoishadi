@@ -27,12 +27,18 @@ export async function getSupporterCount(): Promise<number> {
       cache: 'no-store',
     });
     if (!res.ok) {
-      return 0;
+      const cached = typeof window !== 'undefined' ? localStorage.getItem('justice_supporter_count') : null;
+      return cached ? Number(cached) || 0 : 0;
     }
     const data = await res.json();
-    return typeof data.count === 'number' ? data.count : 0;
+    const count = typeof data.count === 'number' ? data.count : 0;
+    if (typeof window !== 'undefined' && count > 0) {
+      localStorage.setItem('justice_supporter_count', String(count));
+    }
+    return count;
   } catch {
-    return 0;
+    const cached = typeof window !== 'undefined' ? localStorage.getItem('justice_supporter_count') : null;
+    return cached ? Number(cached) || 0 : 0;
   }
 }
 
@@ -73,7 +79,7 @@ export async function submitSupport(params: {
     return {
       success: false,
       alreadySubmitted: true,
-      count,
+      count: Math.max(count, 1),
       message: 'ধন্যবাদ! আপনি ইতিমধ্যে সমর্থন জানিয়েছেন।',
     };
   }
@@ -107,6 +113,9 @@ export async function submitSupport(params: {
       const data: SupportSubmissionResponse = await res.json();
       if (typeof window !== 'undefined') {
         localStorage.setItem('justice_hadi_supported', 'true');
+        if (typeof data.count === 'number' && data.count > 0) {
+          localStorage.setItem('justice_supporter_count', String(data.count));
+        }
       }
       return data;
     }
@@ -115,12 +124,17 @@ export async function submitSupport(params: {
   }
 
   // Fallback: Support successfully accepted and registered
+  let fallbackCount = 1;
   if (typeof window !== 'undefined') {
     localStorage.setItem('justice_hadi_supported', 'true');
+    const prev = Number(localStorage.getItem('justice_supporter_count')) || 0;
+    fallbackCount = Math.max(prev + 1, 1);
+    localStorage.setItem('justice_supporter_count', String(fallbackCount));
   }
 
   return {
     success: true,
+    count: fallbackCount,
     message: 'ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।',
   };
 }
@@ -140,8 +154,11 @@ export function subscribeToRealtimeCount(onCountUpdate: (count: number) => void)
       eventSource.onmessage = (event) => {
         try {
           const parsed = JSON.parse(event.data);
-          if (typeof parsed.count === 'number') {
+          if (typeof parsed.count === 'number' && parsed.count > 0) {
             onCountUpdate(parsed.count);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('justice_supporter_count', String(parsed.count));
+            }
           }
         } catch {
           // ignore parsing error
@@ -160,7 +177,7 @@ export function subscribeToRealtimeCount(onCountUpdate: (count: number) => void)
   pollInterval = setInterval(async () => {
     try {
       const count = await getSupporterCount();
-      if (typeof count === 'number' && count >= 0) {
+      if (typeof count === 'number' && count > 0) {
         onCountUpdate(count);
       }
     } catch {

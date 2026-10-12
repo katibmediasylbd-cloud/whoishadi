@@ -104,6 +104,8 @@ function hashIpSubnet(ip: string): string {
 
 async function startServer() {
   const app = express();
+  app.disable('etag');
+  app.set('etag', false);
 
   // Robust CORS: Allow all origins and methods without credential locks
   app.use((req: Request, res: Response, next) => {
@@ -124,7 +126,8 @@ async function startServer() {
     state = loadSupportersData();
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
     res.setHeader('Pragma', 'no-cache');
-    res.json({ count: state.count });
+    res.setHeader('Expires', '0');
+    res.json({ count: Math.max(state.count, state.supporters.length) });
   });
 
   // API 2: Server-Sent Events (SSE) for Realtime Synchronized Supporter Count

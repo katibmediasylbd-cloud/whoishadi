@@ -28,17 +28,24 @@ export function JusticeSection() {
         const fp = await generateDeviceFingerprint();
         fingerprintRef.current = fp;
 
-        // 2. Fetch initial supporter count from backend
+        // 2. Load cached count immediately to prevent any flicker
+        const cached = typeof window !== 'undefined' ? localStorage.getItem('justice_supporter_count') : null;
+        if (cached && Number(cached) > 0 && isMounted) {
+          setCount(Number(cached));
+        }
+
+        // 3. Fetch initial supporter count from backend
         const initialCount = await getSupporterCount();
-        if (isMounted) {
+        if (isMounted && typeof initialCount === 'number' && initialCount > 0) {
           setCount(initialCount);
         }
 
-        // 3. Check if current visitor has already submitted support
+        // 4. Check if current visitor has already submitted support
         const alreadyDone = await checkSupporterStatus(fp);
         if (isMounted && alreadyDone) {
           setHasSupported(true);
           setThankYouMessage('ধন্যবাদ! আপনি ইতিমধ্যে সমর্থন জানিয়েছেন।');
+          setCount((prev) => Math.max(prev, initialCount || 0, 1));
         }
       } catch (err) {
         console.error('Justice section initialization error:', err);
@@ -51,9 +58,9 @@ export function JusticeSection() {
 
     init();
 
-    // 4. Subscribe to Real-time SSE live updates and fast synchronization from the backend
+    // 5. Subscribe to Real-time SSE live updates and fast synchronization from the backend
     const unsubscribe = subscribeToRealtimeCount((updatedCount) => {
-      if (isMounted) {
+      if (isMounted && typeof updatedCount === 'number' && updatedCount > 0) {
         setCount((prev) => {
           if (updatedCount !== prev) {
             setIsCounterPulsing(true);
@@ -87,13 +94,11 @@ export function JusticeSection() {
 
       if (result.success) {
         setHasSupported(true);
-        if (typeof result.count === 'number' && result.count > 0) {
-          setCount(result.count);
-        } else {
-          getSupporterCount().then((freshCount) => {
-            if (freshCount > 0) setCount(freshCount);
-          });
-        }
+        const finalCount =
+          typeof result.count === 'number' && result.count > 0
+            ? result.count
+            : Math.max(count + 1, 1);
+        setCount(finalCount);
         setIsCounterPulsing(true);
         setTimeout(() => setIsCounterPulsing(false), 1500);
 
@@ -102,14 +107,18 @@ export function JusticeSection() {
         setHasSupported(true);
         if (typeof result.count === 'number' && result.count > 0) {
           setCount(result.count);
+        } else {
+          setCount((prev) => Math.max(prev, 1));
         }
         setThankYouMessage('ধন্যবাদ! আপনি ইতিমধ্যে সমর্থন জানিয়েছেন।');
       } else {
         setHasSupported(true);
+        setCount((prev) => Math.max(prev + 1, 1));
         setThankYouMessage('ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।');
       }
     } catch {
       setHasSupported(true);
+      setCount((prev) => Math.max(prev + 1, 1));
       setThankYouMessage('ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।');
     } finally {
       setSubmitting(false);
