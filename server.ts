@@ -105,19 +105,13 @@ function hashIpSubnet(ip: string): string {
 async function startServer() {
   const app = express();
 
-  // CORS middleware to support preview environments, iframes and cross-origin requests
+  // Robust CORS: Allow all origins and methods without credential locks
   app.use((req: Request, res: Response, next) => {
-    const origin = req.headers.origin;
-    if (origin) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    } else {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-    }
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
     if (req.method === 'OPTIONS') {
-      res.sendStatus(204);
+      res.status(204).end();
       return;
     }
     next();
@@ -128,15 +122,16 @@ async function startServer() {
   // API 1: Fetch current count
   app.get('/api/justice/count', (_req: Request, res: Response) => {
     state = loadSupportersData();
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
     res.json({ count: state.count });
   });
 
   // API 2: Server-Sent Events (SSE) for Realtime Synchronized Supporter Count
   app.get('/api/justice/events', (req: Request, res: Response) => {
     state = loadSupportersData();
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform, no-store');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('X-Accel-Buffering', 'no');
     res.flushHeaders();
@@ -146,7 +141,7 @@ async function startServer() {
 
     sseClients.add(res);
 
-    // Keep-alive ping every 25 seconds
+    // Keep-alive ping every 15 seconds
     const keepAliveTimer = setInterval(() => {
       try {
         res.write(': keepalive\n\n');
@@ -154,7 +149,7 @@ async function startServer() {
         clearInterval(keepAliveTimer);
         sseClients.delete(res);
       }
-    }, 25000);
+    }, 15000);
 
     req.on('close', () => {
       clearInterval(keepAliveTimer);
@@ -172,7 +167,8 @@ async function startServer() {
       state.supporters.some((s) => s.fingerprint === fingerprint)
     );
 
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
     res.json({
       hasSupported: alreadyDone,
       count: state.count,
@@ -204,7 +200,7 @@ async function startServer() {
 
       const ipSubnet = hashIpSubnet(clientIp);
 
-      // 3. Server-side Duplicate Prevention (checked against device visitor fingerprint)
+      // 3. Server-side Duplicate Prevention
       const alreadySubmitted = state.supporters.some(
         (s) => s.fingerprint === validFp
       );
@@ -234,7 +230,8 @@ async function startServer() {
       // 5. Broadcast updated count in real-time to all connected visitors
       broadcastCount(state.count);
 
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
       return res.json({
         success: true,
         count: state.count,
@@ -242,9 +239,10 @@ async function startServer() {
       });
     } catch (err) {
       console.error('Error handling support submission:', err);
+      state = loadSupportersData();
       return res.json({
         success: true,
-        count: state.count + 1,
+        count: state.count,
         message: 'ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।',
       });
     }

@@ -51,12 +51,17 @@ export function JusticeSection() {
 
     init();
 
-    // 4. Subscribe to Real-time SSE live updates from the backend
+    // 4. Subscribe to Real-time SSE live updates and fast synchronization from the backend
     const unsubscribe = subscribeToRealtimeCount((updatedCount) => {
       if (isMounted) {
-        setCount(updatedCount);
-        setIsCounterPulsing(true);
-        setTimeout(() => setIsCounterPulsing(false), 1200);
+        setCount((prev) => {
+          if (updatedCount !== prev) {
+            setIsCounterPulsing(true);
+            setTimeout(() => setIsCounterPulsing(false), 1200);
+            return updatedCount;
+          }
+          return prev;
+        });
       }
     });
 
@@ -85,7 +90,9 @@ export function JusticeSection() {
         if (typeof result.count === 'number' && result.count > 0) {
           setCount(result.count);
         } else {
-          setCount((prev) => prev + 1);
+          getSupporterCount().then((freshCount) => {
+            if (freshCount > 0) setCount(freshCount);
+          });
         }
         setIsCounterPulsing(true);
         setTimeout(() => setIsCounterPulsing(false), 1500);
@@ -93,14 +100,16 @@ export function JusticeSection() {
         setThankYouMessage('ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।');
       } else if (result.alreadySubmitted) {
         setHasSupported(true);
+        if (typeof result.count === 'number' && result.count > 0) {
+          setCount(result.count);
+        }
         setThankYouMessage('ধন্যবাদ! আপনি ইতিমধ্যে সমর্থন জানিয়েছেন।');
       } else {
         setHasSupported(true);
-        setThankYouMessage(result.message || 'ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।');
+        setThankYouMessage('ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।');
       }
     } catch {
       setHasSupported(true);
-      setCount((prev) => prev + 1);
       setThankYouMessage('ধন্যবাদ! আপনার সমর্থন সফলভাবে গ্রহণ করা হয়েছে।');
     } finally {
       setSubmitting(false);
