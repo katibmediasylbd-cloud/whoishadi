@@ -186,9 +186,9 @@ export function JusticeSection() {
     <section
       id="justice-for-hadi"
       aria-label="JUSTICE FOR HADI"
-      className="w-full max-w-xl mx-auto my-6 sm:my-8 px-4"
+      className="w-full max-w-xl mx-auto my-6 sm:my-8 px-3 sm:px-4"
     >
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-neutral-900/90 via-[#0e0e0e]/95 to-[#080808] border border-neutral-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.6)] backdrop-blur-md p-6 sm:p-8 text-center transition-all duration-300 hover:border-neutral-700/80">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-neutral-900/90 via-[#0e0e0e]/95 to-[#080808] border border-neutral-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.6)] backdrop-blur-md p-4 sm:p-7 md:p-8 text-center transition-all duration-300 hover:border-neutral-700/80">
         {/* Subtle Ambient Red Glow */}
         <div
           className="absolute -top-16 left-1/2 -translate-x-1/2 w-72 h-36 bg-[#D71920]/15 blur-3xl pointer-events-none rounded-full"
@@ -196,32 +196,32 @@ export function JusticeSection() {
         />
 
         {/* Section Pill: JUSTICE FOR HADI */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-950/80 border border-neutral-800 text-[10px] sm:text-xs font-cinzel font-semibold tracking-[0.25em] text-neutral-300 uppercase mb-3 select-none">
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-neutral-950/80 border border-neutral-800 text-[10px] sm:text-xs font-cinzel font-semibold tracking-[0.2em] sm:tracking-[0.25em] text-neutral-300 uppercase mb-2.5 sm:mb-3 select-none">
           <span className="w-1.5 h-1.5 rounded-full bg-[#D71920] animate-pulse" />
           <span>JUSTICE FOR HADI</span>
         </div>
 
         {/* Bengali Main Heading: হাদি হত্যার বিচার চাই */}
-        <h2 className="font-bangla text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-normal sm:tracking-tight mb-4 select-none drop-shadow-sm">
+        <h2 className="font-bangla text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-normal sm:tracking-tight mb-3 sm:mb-4 select-none drop-shadow-sm leading-tight">
           হাদি হত্যার বিচার চাই
         </h2>
 
         {/* Supporter Count Display Area */}
-        <div className="my-5 sm:my-6 flex flex-col items-center justify-center">
-          <div className="text-[11px] sm:text-xs uppercase tracking-wider text-neutral-400 font-sans mb-1.5 flex items-center justify-center">
+        <div className="my-4 sm:my-6 flex flex-col items-center justify-center">
+          <div className="text-[10px] sm:text-xs uppercase tracking-wider text-neutral-400 font-sans mb-1 sm:mb-1.5 flex items-center justify-center">
             <span>Total Supporters</span>
           </div>
 
           {/* Large Supporter Count Number in English Font */}
-          <div className="relative flex items-center justify-center min-h-[4rem] sm:min-h-[5rem]">
+          <div className="relative flex items-center justify-center min-h-[3.5rem] sm:min-h-[4.5rem]">
             {loadingInitial ? (
-              <div className="flex items-center gap-2 text-neutral-500 font-sans text-sm animate-pulse">
-                <span className="inline-block w-4 h-4 border-2 border-neutral-600 border-t-white rounded-full animate-spin" />
+              <div className="flex items-center gap-2 text-neutral-500 font-sans text-xs sm:text-sm animate-pulse">
+                <span className="inline-block w-3.5 h-3.5 sm:w-4 sm:h-4 border-2 border-neutral-600 border-t-white rounded-full animate-spin" />
                 <span>Loading...</span>
               </div>
             ) : (
               <div
-                className={`font-sans font-black tabular-nums text-5xl sm:text-6xl md:text-7xl tracking-tight transition-all duration-300 select-none ${
+                className={`font-sans font-black tabular-nums text-4xl min-[380px]:text-5xl sm:text-6xl md:text-7xl tracking-tight transition-all duration-300 select-none ${
                   isCounterPulsing
                     ? 'text-[#D71920] scale-105 drop-shadow-[0_0_25px_rgba(215,25,32,0.6)]'
                     : 'text-white'
@@ -233,14 +233,14 @@ export function JusticeSection() {
           </div>
 
           {/* Real-time Live Sync Indicator */}
-          <div className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-neutral-950/60 border border-neutral-800/60 text-[11px] font-sans text-neutral-400">
-            <span className="relative flex h-2 w-2">
+          <div className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-neutral-950/60 border border-neutral-800/60 text-[10px] sm:text-[11px] font-sans text-neutral-400 max-w-full">
+            <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D71920] opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D71920]" />
             </span>
-            <span>Live Real-time Sync</span>
+            <span className="truncate">Live Real-time Sync</span>
             <span className="text-neutral-600">/</span>
-            <span className="text-neutral-300 font-semibold text-[11px] tabular-nums">
+            <span className="text-neutral-300 font-semibold tabular-nums shrink-0">
               {count.toLocaleString('en-US')}
             </span>
           </div>
@@ -251,13 +251,13 @@ export function JusticeSection() {
           <div
             role="status"
             aria-live="polite"
-            className="w-full max-w-md mx-auto mb-4 p-5 sm:p-6 rounded-2xl bg-neutral-950/85 border border-neutral-800/90 shadow-[0_4px_30px_rgba(0,0,0,0.55)] backdrop-blur-md animate-fade-in flex flex-col items-center text-center"
+            className="w-full max-w-md mx-auto mb-3 sm:mb-4 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-neutral-950/90 border border-neutral-800/90 shadow-[0_4px_30px_rgba(0,0,0,0.55)] backdrop-blur-md animate-fade-in flex flex-col items-center text-center"
           >
             {/* Elegant Success Message */}
-            <div className="flex items-center justify-center gap-2 text-emerald-400 font-bangla text-base sm:text-lg md:text-xl font-bold tracking-wide">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/40 shrink-0">
+            <div className="flex items-center justify-center gap-2 text-emerald-400 font-bangla text-sm min-[380px]:text-[15px] sm:text-lg md:text-xl font-bold tracking-normal leading-snug text-center">
+              <span className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-500/20 border border-emerald-500/40 shrink-0">
                 <svg
-                  className="w-4 h-4 text-emerald-400"
+                  className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -273,7 +273,7 @@ export function JusticeSection() {
             </div>
 
             {/* Sub-text prompt for spreading the voice */}
-            <p className="mt-2.5 mb-5 text-xs sm:text-sm md:text-base text-neutral-300 font-bangla leading-relaxed max-w-sm">
+            <p className="mt-2 sm:mt-2.5 mb-3.5 sm:mb-5 text-xs sm:text-sm text-neutral-300 font-bangla leading-relaxed max-w-sm px-1">
               হাদি হত্যার বিচার বিষয়ে অন্যদেরও নিজেদের মতামত জানানোর সুযোগ দিন।
             </p>
 
@@ -283,11 +283,11 @@ export function JusticeSection() {
               <button
                 type="button"
                 onClick={handleNativeShare}
-                className="w-full py-3.5 px-6 rounded-xl font-bangla text-base sm:text-lg font-bold tracking-wide transition-all duration-200 select-none cursor-pointer flex items-center justify-center gap-2.5 text-white bg-gradient-to-r from-[#D71920] to-[#b8141a] hover:from-[#e51d25] hover:to-[#c7171e] active:scale-[0.98] shadow-[0_4px_20px_rgba(215,25,32,0.45)] hover:shadow-[0_6px_25px_rgba(215,25,32,0.6)] border border-red-500/30"
+                className="w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl font-bangla text-sm sm:text-base md:text-lg font-bold tracking-wide transition-all duration-200 select-none cursor-pointer flex items-center justify-center gap-2 text-white bg-gradient-to-r from-[#D71920] to-[#b8141a] hover:from-[#e51d25] hover:to-[#c7171e] active:scale-[0.98] shadow-[0_4px_20px_rgba(215,25,32,0.45)] hover:shadow-[0_6px_25px_rgba(215,25,32,0.6)] border border-red-500/30 min-h-[46px] sm:min-h-[50px]"
                 aria-label="শেয়ার করুন"
               >
                 <svg
-                  className="w-5 h-5 text-white shrink-0"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-white shrink-0"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -306,13 +306,13 @@ export function JusticeSection() {
               </button>
 
               {/* Secondary Sharing Options: Facebook, WhatsApp, and Copy Website URL */}
-              <div className="grid grid-cols-3 gap-2 w-full pt-1">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 w-full pt-1">
                 {/* Facebook Share Option */}
                 <a
                   href={FACEBOOK_SHARE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-2.5 px-2 rounded-xl bg-neutral-900/90 hover:bg-[#1877F2]/15 border border-neutral-800 hover:border-[#1877F2]/60 text-neutral-200 hover:text-[#1877F2] transition-all duration-200 font-bangla text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98] select-none"
+                  className="py-2.5 px-1 sm:px-2 rounded-xl bg-neutral-900/90 hover:bg-[#1877F2]/15 border border-neutral-800 hover:border-[#1877F2]/60 text-neutral-200 hover:text-[#1877F2] transition-all duration-200 font-bangla text-[11px] sm:text-xs font-semibold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 active:scale-[0.98] select-none min-h-[54px] sm:min-h-[42px]"
                   aria-label="ফেসবুকে শেয়ার করুন"
                 >
                   <svg
@@ -323,7 +323,7 @@ export function JusticeSection() {
                   >
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
-                  <span>ফেসবুক</span>
+                  <span className="truncate max-w-full text-center">ফেসবুক</span>
                 </a>
 
                 {/* WhatsApp Share Option */}
@@ -331,7 +331,7 @@ export function JusticeSection() {
                   href={WHATSAPP_SHARE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-2.5 px-2 rounded-xl bg-neutral-900/90 hover:bg-[#25D366]/15 border border-neutral-800 hover:border-[#25D366]/60 text-neutral-200 hover:text-[#25D366] transition-all duration-200 font-bangla text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98] select-none"
+                  className="py-2.5 px-1 sm:px-2 rounded-xl bg-neutral-900/90 hover:bg-[#25D366]/15 border border-neutral-800 hover:border-[#25D366]/60 text-neutral-200 hover:text-[#25D366] transition-all duration-200 font-bangla text-[11px] sm:text-xs font-semibold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 active:scale-[0.98] select-none min-h-[54px] sm:min-h-[42px]"
                   aria-label="হোয়াটসঅ্যাপে শেয়ার করুন"
                 >
                   <svg
@@ -342,14 +342,14 @@ export function JusticeSection() {
                   >
                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
                   </svg>
-                  <span>হোয়াটসঅ্যাপ</span>
+                  <span className="truncate max-w-full text-center">হোয়াটসঅ্যাপ</span>
                 </a>
 
                 {/* Fallback to copy the website URL */}
                 <button
                   type="button"
                   onClick={handleCopyUrl}
-                  className={`py-2.5 px-2 rounded-xl border transition-all duration-200 font-bangla text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98] select-none cursor-pointer ${
+                  className={`py-2.5 px-1 sm:px-2 rounded-xl border transition-all duration-200 font-bangla text-[11px] sm:text-xs font-semibold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 active:scale-[0.98] select-none cursor-pointer min-h-[54px] sm:min-h-[42px] ${
                     copied
                       ? 'bg-emerald-950/60 border-emerald-600/80 text-emerald-300'
                       : 'bg-neutral-900/90 hover:bg-neutral-800 border-neutral-800 hover:border-neutral-700 text-neutral-200 hover:text-white'
@@ -369,7 +369,7 @@ export function JusticeSection() {
                       >
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
-                      <span>কপি হয়েছে!</span>
+                      <span className="truncate max-w-full text-center">কপি হয়েছে!</span>
                     </>
                   ) : (
                     <>
@@ -385,7 +385,7 @@ export function JusticeSection() {
                         <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                       </svg>
-                      <span>লিংক কপি</span>
+                      <span className="truncate max-w-full text-center">লিংক কপি</span>
                     </>
                   )}
                 </button>
@@ -405,12 +405,12 @@ export function JusticeSection() {
           </div>
         ) : (
           /* Normal Voting Button (Shown before submission) */
-          <div className="w-full max-w-xs mx-auto mb-4">
+          <div className="w-full max-w-xs mx-auto mb-3 sm:mb-4">
             <button
               type="button"
               onClick={handleSupport}
               disabled={submitting || loadingInitial}
-              className={`w-full py-3.5 px-6 rounded-xl font-bangla text-base sm:text-lg font-bold tracking-wide transition-all duration-200 select-none cursor-pointer flex items-center justify-center gap-2 shadow-lg ${
+              className={`w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl font-bangla text-base sm:text-lg font-bold tracking-wide transition-all duration-200 select-none cursor-pointer flex items-center justify-center gap-2 shadow-lg min-h-[48px] sm:min-h-[52px] ${
                 submitting
                   ? 'bg-[#b8141a] text-white cursor-wait opacity-90'
                   : 'bg-[#D71920] hover:bg-[#e51d25] active:scale-[0.98] text-white shadow-[0_4px_20px_rgba(215,25,32,0.4)] hover:shadow-[0_6px_25px_rgba(215,25,32,0.55)] border border-red-500/30'
@@ -444,7 +444,7 @@ export function JusticeSection() {
         )}
 
         {/* Single-line concise disclaimer in English only */}
-        <p className="text-[10.5px] sm:text-xs text-neutral-400 font-sans leading-normal max-w-xl mx-auto pt-3 border-t border-neutral-800/60 select-none">
+        <p className="text-[10px] sm:text-xs text-neutral-400 font-sans leading-normal max-w-xl mx-auto pt-3 border-t border-neutral-800/60 select-none px-2">
           Website-submitted support entries · Not a representative public opinion poll.
         </p>
       </div>
