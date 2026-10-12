@@ -3,6 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function() {
+        try {
+          if (typeof window !== 'undefined') {
+            var _fetch = window.fetch ? window.fetch.bind(window) : undefined;
+            Object.defineProperty(window, 'fetch', {
+              get: function() { return _fetch; },
+              set: function(val) { _fetch = val; },
+              configurable: true,
+              enumerable: true
+            });
+            if (typeof Window !== 'undefined' && Window.prototype) {
+              try {
+                Object.defineProperty(Window.prototype, 'fetch', {
+                  get: function() { return _fetch; },
+                  set: function(val) { _fetch = val; },
+                  configurable: true,
+                  enumerable: true
+                });
+              } catch (_) {}
+            }
+          }
+        } catch (_) {}
+      })();
+    </script>
     <title>WHO IS HADI? — Shaheed Osman Hadi Voice Memorial</title>
     <meta name="description" content="An interactive digital voice memorial dedicated to Shaheed Osman Hadi. HADI'S VOICE. HADI'S WORDS. HADI'S LEGACY." />
     <meta property="og:title" content="WHO IS HADI?" />
