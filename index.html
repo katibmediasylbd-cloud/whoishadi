@@ -5,20 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       (function() {
+        // 1. Suppress 3rd-party browser extension errors (e.g. Urban VPN proxy, content scripts)
+        // from polluting the window or triggering false application crash boundaries.
         try {
           if (typeof window !== 'undefined') {
-            var _fetch = window.fetch ? window.fetch.bind(window) : undefined;
-            Object.defineProperty(window, 'fetch', {
-              get: function() { return _fetch; },
-              set: function(val) { _fetch = val; },
-              configurable: true,
-              enumerable: true
-            });
+            window.addEventListener('error', function(event) {
+              var fn = event.filename || '';
+              var msg = event.message || '';
+              var stack = (event.error && event.error.stack) || '';
+              if (
+                fn.indexOf('chrome-extension://') !== -1 ||
+                stack.indexOf('chrome-extension://') !== -1 ||
+                msg.indexOf('Cannot set property fetch') !== -1
+              ) {
+                event.stopImmediatePropagation();
+                event.preventDefault();
+                return true;
+              }
+            }, true);
+
+            window.addEventListener('unhandledrejection', function(event) {
+              var reasonStr = String(event.reason || '');
+              var stack = (event.reason && event.reason.stack) || '';
+              if (
+                stack.indexOf('chrome-extension://') !== -1 ||
+                reasonStr.indexOf('Cannot set property fetch') !== -1
+              ) {
+                event.stopImmediatePropagation();
+                event.preventDefault();
+                return true;
+              }
+            }, true);
+          }
+        } catch (_) {}
+
+        // 2. Ensure window.fetch and Window.prototype.fetch are freely settable and callable
+        try {
+          if (typeof window !== 'undefined') {
+            var _curFetch = window.fetch ? window.fetch.bind(window) : undefined;
+            try {
+              Object.defineProperty(window, 'fetch', {
+                get: function() { return _curFetch; },
+                set: function(val) { _curFetch = val; },
+                configurable: true,
+                enumerable: true
+              });
+            } catch (_) {}
+
             if (typeof Window !== 'undefined' && Window.prototype) {
               try {
                 Object.defineProperty(Window.prototype, 'fetch', {
-                  get: function() { return _fetch; },
-                  set: function(val) { _fetch = val; },
+                  get: function() { return _curFetch; },
+                  set: function(val) { _curFetch = val; },
                   configurable: true,
                   enumerable: true
                 });
